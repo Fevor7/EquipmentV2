@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stock xmlns="http://www.myschema.by/Equipment" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.myschema.by/EquipmentSchema.xsd">
+	<equipment title="Bike">
+		<id>10001</id>
+		<type>LTD Rocco 60 Hydraulic Disk</type>
+		<grade>Mountine</grade>
+		<ecceessory title="Castle">
+			<id>10002</id>
+			<cablelength>3</cablelength>
+		</ecceessory>
+		<ecceessory title="Pump">
+			<id>10003</id>
+			<weigth>1.25</weigth>
+		</ecceessory>
+	</equipment>
+	<equipment title="Bike">
+		<id>10004</id>
+		<type>Stels Navigator 500 MD</type>
+		<grade>City</grade>
+		<ecceessory title="Castle">
+			<id>10005</id>
+			<cablelength>5</cablelength>
+		</ecceessory>
+		<ecceessory title="Pump">
+			<id>10006</id>
+			<weigth>1.25</weigth>
+		</ecceessory>
+	</equipment>
+	<equipment title="Scooter">
+		<id>10007</id>
+		<type>Hors 052</type>
+		<speed>75</speed>
+		<ecceessory title="BagWithTools">
+			<id>10008</id>
+			<numberoftools>53</numberoftools>
+		</ecceessory>
+		<ecceessory title="Helmet">
+			<id>10009</id>
+			<color>GREEN</color>
+		</ecceessory>
+	</equipment>
+	<equipment title="Scooter">
+		<id>10010</id>
+		<type>M1NSK D4 50</type>
+		<speed>81</speed>
+		<ecceessory title="BagWithTools">
+			<id>10011</id>
+			<numberoftools>47</numberoftools>
+		</ecceessory>
+		<ecceessory title="Helmet">
+			<id>10012</id>
+			<color>BLACK</color>
+		</ecceessory>
+	</equipment>
+</stock>
