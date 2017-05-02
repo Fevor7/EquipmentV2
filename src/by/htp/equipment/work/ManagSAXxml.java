@@ -2,14 +2,20 @@ package by.htp.equipment.work;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import by.htp.equipment.accessory.*;
 import by.htp.equipment.array.*;
 import by.htp.equipment.client.Client;
 import by.htp.equipment.entity.*;
 
-public class Manager implements Management {
+public class ManagSAXxml implements Management {
 	private Stock stock = new Stock();
 	private CustomerBase customer = new CustomerBase();
 	private RentStation rentStat = new RentStation();
@@ -22,21 +28,19 @@ public class Manager implements Management {
 	private RenUnit renUnit;
 
 	public void initialization() {
-		addEquipment("Bike", "LTD Rocco 60 Hydraulic Disk", "Mountain");
-		addAccess("Castle", "3");
-		addAccess("Pump", "1.25");
+		readXML();
+	}
 
-		addEquipment("Bike", "Stels Navigator 500 MD", "City");
-		addAccess("Castle", "5");
-		addAccess("Pump", "1.25");
-
-		addEquipment("Scooter", "Hors 052", "258");
-		addAccess("BagWithTools", "53");
-		addAccess("Helmet", "GREEN");
-
-		addEquipment("Scooter", "M1NSK D4 50", "298");
-		addAccess("BagWithTools", "47");
-		addAccess("Helmet", "BLACK");
+	private void readXML() {
+		Handler defaultHandler = new Handler();
+		try {
+			SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+			SAXParser saxParser = saxParserFactory.newSAXParser();
+			saxParser.parse("/home/viktor/workspace/EquipmentV2/xmlfile/stock.xml", defaultHandler);
+		} catch (Exception ex) {
+			System.out.println(ex.getLocalizedMessage());
+			ex.printStackTrace();
+		}
 	}
 
 	public void addClient() {
@@ -204,7 +208,8 @@ public class Manager implements Management {
 			}
 		}
 	}
-	public void testMeth(Equipment equip2){
+
+	public void testMeth(Equipment equip2) {
 		try {
 			testMethod(equip2);
 		} catch (ClassNotFoundException e) {
@@ -225,20 +230,24 @@ public class Manager implements Management {
 			e.printStackTrace();
 		}
 	}
-	public void testMethod(Equipment equip2) throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchFieldException {
+
+	public void testMethod(Equipment equip2)
+			throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, InstantiationException, NoSuchFieldException {
 		String ss = "by.htp.equipment.entity.Bike";
 		String s2 = equip2.getClass().getName();
 		for (int i = 0; i < stock.getCl().length; i++) {
 			if ((equip2.getClass() == (stock.getCl())[i]) && (ss.equals(s2))) {
 				Class<?> c = Class.forName(s2);
 				Constructor<?>[] con = c.getConstructors();
-				Object obj = con[1].newInstance(3,"dfg0","dfg","dfgdfg"); 
-//				Field[] f = c.getDeclaredFields();  //   c.getDeclaredField("grade");
-//				for (int j=0; j<f.length; j++){
-//					f[j].setAccessible(true);
-//					f[j].set(obj, "ffdfaf"); 
-//					System.out.println(j);
-//				}
+				Object obj = con[1].newInstance(3, "dfg0", "dfg", "dfgdfg");
+				// Field[] f = c.getDeclaredFields(); //
+				// c.getDeclaredField("grade");
+				// for (int j=0; j<f.length; j++){
+				// f[j].setAccessible(true);
+				// f[j].set(obj, "ffdfaf");
+				// System.out.println(j);
+				// }
 				Equipment test = (Equipment) obj;
 			}
 		}
@@ -295,5 +304,63 @@ public class Manager implements Management {
 			prntRenUnit(equipment);
 		}
 
+	}
+
+	private class Handler extends DefaultHandler {
+		private boolean equip = false;
+		private boolean access = false;
+		String title = "";
+		String line = "";
+		private List<String> data = new ArrayList<String>();
+
+		@Override
+		public void startElement(String uri, String localName, String qName, Attributes attributes)
+				throws SAXException {
+			if (("equipment").equals(qName)) {
+				equip = true;
+				title = attributes.getValue(0);
+			}
+			if (("ecceessory").equals(qName) && (equip == true)) {
+				access = true;
+				equip = false;
+				newEquip(title, data);
+				data.clear();
+				title = attributes.getValue(0);
+			}
+			if (("ecceessory").equals(qName) && (equip == false)) {
+				access = true;
+				data.clear();
+				title = attributes.getValue(0);
+			}
+		}
+
+		@Override
+		public void endElement(String uri, String localName, String qName) throws SAXException {
+			if ((equip == true) || (access == true)) {
+				if (("ecceessory").equals(qName)) {
+					access = false;
+					newAccess(title, data);
+					data.clear();
+				} else {
+					data.add(line.trim());
+				}
+			}
+		}
+
+		// @Override
+		public void characters(char ch[], int start, int stop) throws SAXException {
+			if ((equip == true) || (access == true)) {
+				line = new String(ch, start, stop);
+			}
+		}
+
+	}
+
+	private void newEquip(String title, List<String> paramLine) {
+		addEquipment(title, paramLine.get(1), paramLine.get(2));
+	}
+
+	private void newAccess(String title, List<String> paramLine) {
+		addAccess(title, paramLine.get(1));
 	}
 }
